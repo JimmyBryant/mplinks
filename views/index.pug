@@ -1,0 +1,46 @@
+extends layout
+
+block content
+  style.
+    .btn-delete{
+      display: inline-block;
+      margin: 5px;
+      color: red;
+      cursor: pointer;
+    }
+  h1= title
+
+  ul#list(style='list-style: decimal-leading-zero;')
+    each item in data
+      li
+        div
+          if item.title
+            a(href=item.content_url)= item.title
+            label.btn-delete(data-id=item._id) 删除
+          else if item.name
+            a(href='/account/'+item._id)= item.name+"("+item._id+")"
+            span='('+item.count+')'
+          else
+            a(href='/links/'+item._id)= item._id
+            span='('+item.count+')'
+
+  script(src='https://cdn.jsdelivr.net/npm/jquery@3.5.1/dist/jquery.min.js')
+  script.
+    var list = document.querySelector('#list');
+    list.addEventListener('click',e=>{
+      var tar = e.target;
+      console.log(tar,'click')
+      if(tar.className=='btn-delete'){
+        var _id = tar.dataset.id;
+        console.log('delete',_id)
+        var url = '/links/delete/'+_id;
+        $.get(url,function(res){
+          if(res&&res.code==200){
+            $(tar).parents('li').eq(0).remove();
+          }else{
+            console.error('delete'+_id+'failed')
+          }
+        })
+      }
+    })
+
